@@ -1,5 +1,9 @@
 { 
     "botToken"  : "-- CHANGED --",
     "ownerid": "147788062523523072",
-    "prefix" : ""
+    "prefix" : "",
+    "host": "",
+    "user": "",
+    "pass": "",
+    "db": ""
   }
