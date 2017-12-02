@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Liam Townsley (liam#1374)",
+  "author": "Liam Townsley (liam#1374)& Sascha_T {Sascha_T#3993}",
   "license": "Apache-2-0",
   "dependencies": {
     "discord.js": "github:hydrabolt/discord.js#indev",
