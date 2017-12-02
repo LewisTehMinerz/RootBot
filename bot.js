@@ -32,11 +32,6 @@ fs.readdir("./cmd/", (err, files) => {
 loadCmds();
 
 bot.on("message",message => {
-  /*if(message.type == "dm") { console.log(`[${moment().format("DD-MM-YYYY HH:mm:ss")}]` + "[DM] " + message.author.username + "#" + message.author.discriminator + `: ${message}`); }
-  *else
-  *{
-  *console.log(`[${moment().format("DD-MM-YYYY HH:mm:ss")}]` + "[#" + message.channel.name +  "] " + message.author.username + "#" + message.author.discriminator + `: ${message}`);
-  }*/
   if (!message.content.startsWith(config.prefix)) return;
   let command = message.content.toLocaleLowerCase().split(" ")[0].slice(config.prefix.length);
   let args = message.content.split(" ").slice(1);
@@ -63,8 +58,8 @@ bot.on("message",message => {
 });
 
 bot.on("ready", () => {
-  bot.user.setGame(">help for help and maybe a christmas tree.", "https://twitch.tv/you_best")
-  log(`LULURD'S BOT: Ready to serve ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
+  bot.user.setGame("with ${bot.users.size} users.", "https://twitch.tv/you_best")
+  log(`ROOTBOT: Ready to serve ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
 });
 bot.on("error", console.log);
 bot.on("warn", console.warn);
