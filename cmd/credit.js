@@ -1,7 +1,7 @@
 exports.run = (bot, message, args = []) => {
     
     message.channel.send(
-        "liam#1347 | Making the bot \n Symplyfyed#4047 | Suggestion for >bean"
+        "liam#1347 | Making the bot \nSascha_T#3993 | Making the bot\n Symplyfyed#4047 | Suggestion for >bean"
     )
 
         };
