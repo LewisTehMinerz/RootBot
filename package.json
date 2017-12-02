@@ -10,7 +10,8 @@
   "license": "Apache-2-0",
   "dependencies": {
     "discord.js": "github:hydrabolt/discord.js#indev",
-    "moment": "^2.15.1"
+    "moment": "^2.15.1",
+    "mysql": "^2.15.0"
   },
   "engines": {
     "node": "6.4.0"

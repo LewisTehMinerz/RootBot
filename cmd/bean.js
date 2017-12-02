@@ -5,7 +5,7 @@ exports.run = (bot, message, args = []) => {
         };
           
           exports.conf = {
-            aliases: ["fban"],
+            aliases: ["fbean"],
             permLevel: 0
           };
           
