@@ -59,14 +59,14 @@ bot.on("message",message => {
 
 bot.on("ready", () => {
     var users = 0;
-  bot.users.array().forEach(User => {
-    if(User.bot) {
+    bot.users.array().forEach(User => {
+        if(User.bot) {
 
-    } else {
-        users = users + 1;
-    }
-  });
-  bot.user.setGame("with "+ users +" users.", "https://twitch.tv/you_best");
+        } else {
+            users = users + 1;
+        }
+    });
+  bot.user.setGame("with "+ users +" users.", "https://twitch.tv/you_best")
   log(`ROOTBOT: Ready to serve ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
 });
 bot.on("error", console.log);
@@ -110,37 +110,3 @@ bot.elevation = function(message) {
   if(message.author.id === config.ownerid) permlvl = 4;
   return permlvl;
 };
-
-function exitHandler(options, err) {
-    if (options.cleanup) {
-        bot.destroy().then(() => {
-            process.exit();
-        });
-    }
-    if (err) {
-        console.log(err.stack);
-    }
-    if (options.exit) {
-        bot.destroy().then(() => {
-            process.exit();
-        });
-    }
-    if (options.c) {
-        bot.destroy().then(() => {
-            process.exit();
-        });
-    }
-}
-
-//do something when app is closing
-process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-//catches ctrl+c event
-process.on('SIGINT', exitHandler.bind(null, {c:true}));
-
-// catches "kill pid" (for example: nodemon restart)
-process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
-process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
-process.on('SIGHUP', exitHandler.bind(null, {exit:true}));
-//catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
