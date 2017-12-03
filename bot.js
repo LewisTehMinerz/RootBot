@@ -103,6 +103,11 @@ bot.elevation = function(message) {
   return permlvl;
 };
 
+function exitHandler(options, err) {
+    if (options.cleanup) console.log('clean');
+    if (err) console.log(err.stack);
+    if (options.exit) process.exit();
+}
 //do something when app is closing
 process.on('exit', exitHandler.bind(null,{cleanup:true}));
 
