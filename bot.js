@@ -1,8 +1,12 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client({ fetchAllMembers: true });
-const config = require("./config.json");
+const config = require("./json/config.json");
 const fs = require("fs");
 const moment = require("moment");
+const snekfetch = require('snekfetch');
+const key = config.tokens.discordbots;
+
+bot.login(config.tokens.discord);
 
 const log = (message) => {
   console.log(`[${moment().format("DD-MM-YYYY HH:mm:ss")}] ${message}`);
@@ -11,7 +15,6 @@ const log = (message) => {
 function loadCmds () {
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
-bot.notes = require("./notes.json")
 fs.readdir("./cmd/", (err, files) => {
   if (err) console.error(err);
   console.log(" ")
@@ -27,11 +30,20 @@ fs.readdir("./cmd/", (err, files) => {
   });
   console.log(" ")
 });
+snekfetch.post(`https://discordbots.org/api/bots/386510361152585738/stats`)
+    .set('Authorization', key)
+    .send({ server_count: bot.guilds.size/*, shard_count: bot.shard.size, shard_id: bot.shard.id */})
+    .then(() => console.log(`Posted to dbl.`))
+    .catch((e) => e);
+
 }
 
 loadCmds();
 
+// MESSAGE
 bot.on("message",message => {
+  if(message.author.bot === true) return;
+  if(message.channel.type === "dm") return;
   if (!message.content.startsWith(config.prefix)) return;
   let command = message.content.toLocaleLowerCase().split(" ")[0].slice(config.prefix.length);
   let args = message.content.split(" ").slice(1);
@@ -57,14 +69,45 @@ bot.on("message",message => {
   }
 });
 
+//ON JOIN
+bot.on("guildCreate", guild => {
+	console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
+	
+	snekfetch.post(`https://discordbots.org/api/bots/386510361152585738/stats`)
+    .set('Authorization', key)
+    .send({ server_count: bot.guilds.size/*, shard_count: bot.shard.size, shard_id: bot.shard.id */})
+    .then(() => console.log(`Posted to dbl.`))
+    .catch((e) => e);
+	
+});
+
+// ON LEAVE
+bot.on("guildDelete", guild => {
+	console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
+	
+	snekfetch.post(`https://discordbots.org/api/bots/386510361152585738/stats`)
+    .set('Authorization', key)
+    .send({ server_count: bot.guilds.size/*, shard_count: bot.shard.size, shard_id: bot.shard.id */})
+    .then(() => console.log(`Posted to dbl.`))
+    .catch((e) => e);
+});
+
+// ON START
 bot.on("ready", () => {
-  bot.user.setGame("with ${bot.users.size} users.", "https://twitch.tv/you_best")
+  bot.user.setGame(`with ${bot.users.size} users.`, "https://twitch.tv/you_best")
+  /*setTimeout(function () {
+    if (newState == -1) {
+        alert('VIDEO HAS STOPPED');
+    }
+}, 60000);*/
+
   log(`ROOTBOT: Ready to serve ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
 });
-bot.on("error", console.log);
-bot.on("warn", console.warn);
 
-bot.login(config.botToken);
+/***************************************/
+/* */ bot.on("error", console.log); /* */
+/* */ bot.on("warn", console.warn); /* */
+/***************************************/
 
 bot.reload = function(command) {
   return new Promise((resolve, reject) => {
@@ -102,16 +145,3 @@ bot.elevation = function(message) {
   if(message.author.id === config.ownerid) permlvl = 4;
   return permlvl;
 };
-
-//do something when app is closing
-process.on('exit', exitHandler.bind(null,{cleanup:true}));
-
-//catches ctrl+c event
-process.on('SIGINT', exitHandler.bind(null, {c:true}));
-
-// catches "kill pid" (for example: nodemon restart)
-process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
-process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
-process.on('SIGHUP', exitHandler.bind(null, {exit:true}));
-//catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
