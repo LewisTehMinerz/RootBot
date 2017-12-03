@@ -30,30 +30,38 @@ fs.readdir("./cmd/", (err, files) => {
 }
 
 loadCmds();
+function getPrefix(guildID) {
 
+}
 bot.on("message",message => {
-  if (!message.content.startsWith(config.prefix)) return;
-  let command = message.content.toLocaleLowerCase().split(" ")[0].slice(config.prefix.length);
-  let args = message.content.split(" ").slice(1);
-  let perms = bot.elevation(message);
-  let cmd;
+  if(message.channel.type == "DM") {
+    message.reply("You cant use RootBot in your DM's!");
+  } else {
+      if (!message.content.startsWith(config.prefix)) return;
+      let command = message.content.toLocaleLowerCase().split(" ")[0].slice(config.prefix.length);
+      let args = message.content.split(" ").slice(1);
+      let perms = bot.elevation(message);
+      let cmd;
 
-  if (bot.commands.has(command)) {
-    cmd = bot.commands.get(command);
-  } else if (bot.aliases.has(command)) {
-    cmd = bot.commands.get(bot.aliases.get(command));
-  }
-  if (cmd) {
-    if (perms < cmd.conf.permLevel) return;
-    cmd.run(bot, message, args, perms);
-  }
+      if (bot.commands.has(command)) {
+          cmd = bot.commands.get(command);
+      } else if (bot.aliases.has(command)) {
+          cmd = bot.commands.get(bot.aliases.get(command));
+      }
+      if (cmd) {
+          if (perms < cmd.conf.permLevel) return;
+          cmd.run(bot, message, args, perms);
+      }
 
-  if(message.author.id == config.ownerid) { 
-  if(message.content === config.prefix + "reload") {
-    loadCmds()
-    message.channel.send(`All Commands Reloaded`)
-  }} if(message.content === config.prefix + "reload" && message.author.id != config.ownerid) {
-    message.react("⛔")
+      if (message.author.id == config.ownerid) {
+          if (message.content === config.prefix + "reload") {
+              loadCmds()
+              message.channel.send(`All Commands Reloaded`)
+          }
+      }
+      if (message.content === config.prefix + "reload" && message.author.id != config.ownerid) {
+          message.react("⛔")
+      }
   }
 });
 
@@ -64,7 +72,7 @@ bot.on("ready", () => {
 bot.on("error", console.log);
 bot.on("warn", console.warn);
 
-bot.login(config.botToken);
+bot.login(config.tokens.discord);
 
 bot.reload = function(command) {
   return new Promise((resolve, reject) => {
