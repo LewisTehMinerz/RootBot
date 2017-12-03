@@ -8,6 +8,7 @@ const log = (message) => {
 };
 
 function loadCmds () {
+bot.helptext = "```";
 bot.commands = new Discord.Collection();
 bot.aliases = new Discord.Collection();
 bot.notes = require("./notes.json")
@@ -19,6 +20,7 @@ fs.readdir("./cmd/", (err, files) => {
     delete require.cache[require.resolve(`./cmd/${f}`)]
     let props = require(`./cmd/${f}`);
     log(`Loading Command: ${props.help.name}`);
+    bot.helptext = bot.helptext + props.help.name + " - " + props.help.description + "\n";
     bot.commands.set(props.help.name, props);
     props.conf.aliases.forEach(alias => {
       bot.aliases.set(alias, props.help.name);
