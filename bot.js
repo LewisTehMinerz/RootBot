@@ -3,7 +3,6 @@ const bot = new Discord.Client({ fetchAllMembers: true });
 const config = require("./json/config.json");
 const fs = require("fs");
 const moment = require("moment");
-
 const log = (message) => {
   console.log(`[${moment().format("DD-MM-YYYY HH:mm:ss")}] ${message}`);
 };
@@ -31,14 +30,29 @@ fs.readdir("./cmd/", (err, files) => {
 
 loadCmds();
 function getPrefix(guildID) {
+    var contents = fs.readFileSync("./json/custom-prefixes.json");
+// Define to JSON type
+    var jsonContent = JSON.parse(contents);
+    if(jsonContent["servers"][guildID] == undefined) {
+        return config.prefix;
+    } else {
+        return jsonContent["servers"][guildID];
+    }
 
 }
+function setPrefix(guildID, prefix) {
+    var contents = fs.readFileSync("./json/custom-prefixes.json");
+    var jsonContent = JSON.parse(contents);
+    jsonContent["servers"][guildID] = prefix;
+    fs.writeFileSync("./json/custom-prefixes.json", JSON.stringify(jsonContent));
+}
 bot.on("message",message => {
-  if(message.channel.type == "DM") {
-    message.reply("You cant use RootBot in your DM's!");
+
+  if(message.channel.type == "dm") {
+
   } else {
-      if (!message.content.startsWith(config.prefix)) return;
-      let command = message.content.toLocaleLowerCase().split(" ")[0].slice(config.prefix.length);
+      if (!message.content.startsWith(getPrefix(message.guild.id))) return;
+      let command = message.content.toLocaleLowerCase().split(" ")[0].slice(getPrefix(message.guild.id).length);
       let args = message.content.split(" ").slice(1);
       let perms = bot.elevation(message);
       let cmd;
@@ -59,14 +73,18 @@ bot.on("message",message => {
               message.channel.send(`All Commands Reloaded`)
           }
       }
-      if (message.content === config.prefix + "reload" && message.author.id != config.ownerid) {
+      if (message.content === getPrefix(message.guild.id) + "reload" && message.author.id != config.ownerid) {
           message.react("⛔")
+      }
+      if(message.content.split(" ")[0] === getPrefix(message.guild.id) + "setprefix") {
+          setPrefix(message.guild.id, message.content.split(" ")[1]);
+          message.react("👌");
       }
   }
 });
 
 bot.on("ready", () => {
-  bot.user.setGame("with ${bot.users.size} users.", "https://twitch.tv/you_best")
+  bot.user.setGame("with " + bot.users.size +" users.", "https://twitch.tv/you_best")
   log(`ROOTBOT: Ready to serve ${bot.users.size} users, in ${bot.channels.size} channels of ${bot.guilds.size} servers.`);
 });
 bot.on("error", console.log);
