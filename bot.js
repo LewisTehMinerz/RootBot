@@ -1,6 +1,6 @@
 const Discord = require("discord.js");
 const bot = new Discord.Client({ fetchAllMembers: true });
-const config = require("./json/config.json");
+const config = require("../config.json");
 const fs = require("fs");
 const moment = require("moment");
 const log = (message) => {
@@ -17,14 +17,20 @@ fs.readdir("./cmd/", (err, files) => {
   console.log(" ")
   log(`Loading a total of ${files.length} commands.`);
   files.forEach(f => {
+
+
     delete require.cache[require.resolve(`./cmd/${f}`)]
     let props = require(`./cmd/${f}`);
-    log(`Loading Command: ${props.help.name}`);
-    bot.helptext = bot.helptext + props.help.name + " - " + props.help.description + "\n";
-    bot.commands.set(props.help.name, props);
-    props.conf.aliases.forEach(alias => {
-      bot.aliases.set(alias, props.help.name);
-    });
+    if(props.wip) {
+    }else{
+
+        log(`Loading Command: ${props.help.name}`);
+        bot.helptext = bot.helptext + props.help.name + " - " + props.help.description + "\n";
+        bot.commands.set(props.help.name, props);
+        props.conf.aliases.forEach(alias => {
+            bot.aliases.set(alias, props.help.name);
+        });
+    }
   });
   console.log(" ")
 });
@@ -65,7 +71,10 @@ bot.on("message",message => {
           cmd = bot.commands.get(bot.aliases.get(command));
       }
       if (cmd) {
-          if (perms < cmd.conf.permLevel) return;
+          if (perms < cmd.conf.permLevel) {
+              message.channel.send("You do not have the permission level required, \n to perform this action. \n \n You have a permission level of: " + perms + "\n You need a permission level of " + cmd.conf.permLevel);
+              return;
+          }
           cmd.run(bot, message, args, perms);
       }
 
@@ -114,10 +123,46 @@ bot.reload = function(command) {
     }
   });
 };
+bot.personCanKick = function(message) {
+    let ban_perm = false; //Bad Copypasta strikes back again!
+    message.member.roles.forEach(roleX => {
+        if(roleX.hasPermission('KICK_MEMBERS')) {
+            ban_perm = true;
+        }
+    });
+    return ban_perm;
+}
+bot.personCanMute = function(message) {
+    let ban_perm = false; // And again!
+    message.member.roles.forEach(roleX => {
+        if(roleX.hasPermission('MANAGE_MESSAGES')) {
+            ban_perm = true;
+        }
+    });
+    return ban_perm;
+}
+bot.personCanBan = function(message) {
+    let ban_perm = false;
+    message.member.roles.forEach(roleX => {
+        if(roleX.hasPermission('BAN_MEMBERS')) {
+            ban_perm = true;
+        }
+    });
+    return ban_perm;
+};
+bot.botCanBan = function(message) {
+    let ban_perm = false;
+    message.guild.me.roles.forEach(roleX => {
+        if(roleX.hasPermission('BAN_MEMBERS')) {
+            ban_perm = true;
+        }
+    });
+    return ban_perm;
+};
 
 bot.elevation = function(message) {
   let permlvl = 0;
-  
+
   let staff_role = message.guild.roles.find("name", "Staff");
   if(staff_role && message.member.roles.has(staff_role.id)) permlvl = 1;
 
@@ -126,8 +171,9 @@ bot.elevation = function(message) {
   
   let admin_role = message.guild.roles.find("name", "Moderator+");
   if(admin_role && message.member.roles.has(admin_role.id)) permlvl = 3;
-  
-  if(message.author.id === config.ownerid) permlvl = 4;
+
+    if(message.author.id === config.ownerid) permlvl = 4; // Liam
+    if(message.author.id === "133885827523674112") permlvl = 4; // Sascha_T
   return permlvl;
 };
 
