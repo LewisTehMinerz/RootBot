@@ -1,9 +1,8 @@
 { 
-    "botToken"  : "-- CHANGED --",
     "ownerid": "147788062523523072",
-    "prefix" : "",
-    "host": "",
-    "user": "",
-    "pass": "",
-    "db": ""
+    "prefix" : "$",
+    "tokens": {
+      "discord": "TOKEN",
+      "discordbots": "KEY"
+    }
   }
