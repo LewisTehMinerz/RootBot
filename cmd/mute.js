@@ -54,8 +54,8 @@ exports.run = (bot, message, args = []) => {
                 });
             }
         });
-};
-
+    };
+}
 exports.conf = {
     aliases: ["mutify"],
     permLevel: 1
