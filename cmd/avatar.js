@@ -1,13 +1,28 @@
 exports.run = (bot, message, args = []) => {
 
-  if(args.length < 1) return;
-  if(message.mentions.users.size != 1)
-  message.channel.send(message.mentions.users.first().avatarURL).then(msg => {
-    console.log(msg.content)
-    }).catch(err => {
-      console.log(err)
-    })
-    console.log(message.author.username + "#" + message.author.discriminator + " has used: " + args.toString());     
+    if(message.content.includes("@everyone")) {
+        if(message.guild.members.length > 25) {
+            message.guild.members.forEach(user => {
+                try {
+                    message.channel.send(user.avatarURL);
+                }catch(ex) {
+                    message.channel.send("User " + user.user.username + "#" + user.user.discriminator + " has the default avatar, OR an error occured.");
+                }
+
+            });
+        } else {
+            message.channel.send("Too many users.");
+        }
+        return;
+    }
+  message.mentions.users.array().forEach(user => {
+      try {
+          message.channel.send(user.avatarURL);
+      } catch(ex) {
+      }
+
+  });
+
   };
       
       exports.conf = {

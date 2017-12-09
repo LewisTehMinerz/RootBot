@@ -9,8 +9,9 @@
   "author": "Liam Townsley (liam#1374)& Sascha_T {Sascha_T#3993}",
   "license": "Apache-2-0",
   "dependencies": {
-    "discord.js": "github:hydrabolt/discord.js#indev",
-    "moment": "^2.15.1",
+    "discord.js": "11.2.1",
+    "math": "0.0.3",
+    "moment": "^2.19.3",
     "mysql": "^2.15.0"
   },
   "engines": {

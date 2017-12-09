@@ -17,7 +17,7 @@ fs.readdir("./cmd/", (err, files) => {
   console.log(" ")
   log(`Loading a total of ${files.length} commands.`);
   files.forEach(f => {
-
+    log("Loading command from: ./cmd/" +f)
 
     delete require.cache[require.resolve(`./cmd/${f}`)]
     let props = require(`./cmd/${f}`);
@@ -165,12 +165,26 @@ bot.elevation = function(message) {
 
   let staff_role = message.guild.roles.find("name", "Staff");
   if(staff_role && message.member.roles.has(staff_role.id)) permlvl = 1;
-
+  message.member.roles.array().forEach(role => {
+      if(role.hasPermission("MANAGE_MESSAGES")) {
+          permlvl = 1;
+      }
+  });
   let mod_role = message.guild.roles.find("name", "Moderator");
   if(mod_role && message.member.roles.has(mod_role.id)) permlvl = 2;
-  
-  let admin_role = message.guild.roles.find("name", "Moderator+");
+    message.member.roles.array().forEach(role => {
+        if(role.hasPermission("KICK_MEMBERS")) {
+            permlvl = 2;
+        }
+    });
+
+    let admin_role = message.guild.roles.find("name", "Moderator+");
   if(admin_role && message.member.roles.has(admin_role.id)) permlvl = 3;
+    message.member.roles.array().forEach(role => {
+        if(role.hasPermission("BAN_MEMBERS")) {
+            permlvl = 3;
+        }
+    });
 
     if(message.author.id === config.ownerid) permlvl = 4; // Liam
     if(message.author.id === "133885827523674112") permlvl = 4; // Sascha_T
