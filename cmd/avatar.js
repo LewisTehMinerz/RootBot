@@ -1,7 +1,7 @@
 exports.run = (bot, message, args = []) => {
 
     if(message.content.includes("@everyone")) {
-        if(message.guild.members.length > 25) {
+        if(message.guild.members.length <= 25) {
             message.guild.members.forEach(user => {
                 try {
                     message.channel.send(user.avatarURL);
