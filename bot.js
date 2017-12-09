@@ -192,6 +192,11 @@ bot.elevation = function(message) {
 };
 
 function exitHandler(options, err) {
+    if (options.isErrorX) {
+        fs.writeFile(__dirname + "/err.txt", err.stack, function(err) {
+
+        });
+    }
     if (options.cleanup) console.log('clean');
     if (err) console.log(err.stack);
     if (options.exit) process.exit();
@@ -207,4 +212,20 @@ process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
 process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
 process.on('SIGHUP', exitHandler.bind(null, {exit:true}));
 //catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+process.on('uncaughtException', error => {
+    exitHandler.bind(null, {exit:true, isErrorX:true, err:error})
+});
+try {
+    fs.unlinkSync(__dirname + "/pid.txt");
+} catch(ex) {
+
+}
+
+
+fs.writeFile(__dirname + "/pid.txt", process.pid, function(err) {
+    if(err) {
+        return console.log(err);
+    }
+
+    console.log("Termination PID written down.");
+});
